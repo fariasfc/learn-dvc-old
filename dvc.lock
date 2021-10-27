@@ -50,11 +50,11 @@ stages:
       params.yaml:
         model:
           seed: 42
-          hidden_layer_sizes: (10, 10)
+          hidden_layer_sizes: (20, 10)
     outs:
     - path: model/model.pkl
-      md5: 65d71e26987a729f720a47f91ab95ddb
-      size: 13029
+      md5: 34db365b755deed94fc302180e6e5eff
+      size: 17109
   evaluate_model:
     cmd: python src/models/evaluate_model.py data/features model/model.pkl scores.json
       roc.json
@@ -64,15 +64,15 @@ stages:
       size: 133792
       nfiles: 4
     - path: model/model.pkl
-      md5: 65d71e26987a729f720a47f91ab95ddb
-      size: 13029
+      md5: 34db365b755deed94fc302180e6e5eff
+      size: 17109
     - path: src/models/evaluate_model.py
       md5: 9a7c2fe03fe3f2c3c37dbe3da73d69a0
       size: 1332
     outs:
     - path: roc.json
-      md5: 4d36de85ecae81e393372c86dd564649
-      size: 45222
+      md5: 44af230dc0d75f80d7c506a0891a3ec9
+      size: 41877
     - path: scores.json
-      md5: ebce254e312d632bcbbc6f089530db21
+      md5: 5ca5d4c6546e3e8840ada9c6b26ad51a
       size: 33
