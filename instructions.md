@@ -167,6 +167,9 @@ dvc run --name train_model \
 `dvc dag`
 
 ## Creating the evaluate_model stage
+- Metrics: scalar values
+- plots: history
+  - it is possible to create other templates
 ```
 dvc run --name evaluate_model \
 	--deps src/models/evaluate_model.py \
@@ -191,3 +194,21 @@ Now we need to commit both `roc.json` and `scores.json` so we can compare betwee
 - `dvc plots show`
 	- Open file in browser
 - `dvc metrics show --all-commits`
+- `dvc plots diff HEAD~1`
+
+
+
+- `dvc get --rev githash https://github.com/fariasfc/learn-dvc model/model.pkl`
+
+
+# Experiments
+- `dvc exp show`
+- `dvc exp run --set-param model.hidden_layer_sizes="(40,10)"`
+We can also run experiments in batches using queues
+- `dvc exp run --queue --set-param model.hidden_layer_sizes="(1,2)"`
+- `dvc exp run --queue --set-param model.hidden_layer_sizes="(3,4)"`
+- `dvc exp run --queue --set-param model.hidden_layer_sizes="(1,2)" --set-param featurize.feature_range="(0,1)"`
+- `dvc exp run --queue --set-param model.hidden_layer_sizes="(100,20)" --set-param featurize.feature_range="(0.1,0.9)"`
+- `dvc exp run --queue --set-param model.hidden_layer_sizes="(3,4)"`
+- `dvc exp run --run-all --jobs 2`
+- `dvc exp show`
