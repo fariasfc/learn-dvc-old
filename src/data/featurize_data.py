@@ -11,7 +11,6 @@ import yaml
 def featurize_data(splits_dir: Path, output_dir: Path) -> None:
     # reading parameters
     params = yaml.safe_load(open("params.yaml"))["featurize"]
-    random.seed(params["seed"])
 
     # Loading data
     df_train = pd.read_csv(splits_dir / "train.csv")

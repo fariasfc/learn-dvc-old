@@ -1,4 +1,5 @@
 import random
+import numpy as np
 from pathlib import Path
 import typer
 import pandas as pd
@@ -22,10 +23,19 @@ def prepare_splits(raw_data_path: Path, output_dir: Path) -> None:
     df["Class"] = label_encoder.fit_transform(df["Class"])
 
     train_indices, test_indices = train_test_split(
-        df["Class"], test_size=test_percentage, random_state=params["seed"]
+        df["Class"],
+        test_size=test_percentage,
+        random_state=params["seed"],
+        stratify=df["Class"],
     )
 
+    train_indices = np.where(train_indices)
+    test_indices = np.where(test_indices)
+
+    print(train_indices)
+
     df_train = df.iloc[train_indices]
+    print(df_train.shape)
     df_test = df.iloc[test_indices]
 
     output_dir.mkdir(exist_ok=True, parents=True)

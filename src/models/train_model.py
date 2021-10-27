@@ -5,7 +5,7 @@ from pathlib import Path
 import typer
 import pandas as pd
 import yaml
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.neural_network import MLPClassifier
 
 
 def train_model(data_dir: Path, output_model_dir: Path) -> None:
@@ -16,15 +16,16 @@ def train_model(data_dir: Path, output_model_dir: Path) -> None:
     train_x = np.load(data_dir / "train_x.npy")
     train_y = np.load(data_dir / "train_y.npy")
 
-    model = RandomForestClassifier(
-        n_estimators=params["n_estimators"], random_state=params["seed"]
+    model = MLPClassifier(
+        hidden_layer_sizes=tuple(eval(params["hidden_layer_sizes"])),
+        random_state=params["seed"],
     )
 
     model.fit(train_x, train_y)
 
     output_model_dir.mkdir(exist_ok=True, parents=True)
 
-    with open(output_model_dir / "rf.pkl", "wb") as f:
+    with open(output_model_dir / "model.pkl", "wb") as f:
         pickle.dump(model, f)
 
 

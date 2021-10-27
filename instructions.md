@@ -55,12 +55,12 @@ Changes to be committed:
 
 
 # Data and Model Versioning
-`dvc add data/iris.csv`
-- Adds `data/iris.csv`to the .gitignore in `data` folder
-- Creates `dat/iris.csv.dvc` containing the md5, size and path of the file
+`dvc add data/phoneme.csv`
+- Adds `data/phoneme.csv`to the .gitignore in `data` folder
+- Creates `dat/phoneme.csv.dvc` containing the md5, size and path of the file
 - Moved the data to the project's `.dvc/cache` and linked it
 - Placeholder for the original file, versioned like source code in GIT
-  - `git add data/iris.csv.dvc data/.gitignore`
+  - `git add data/phoneme.csv.dvc data/.gitignore`
   - `git commit -m "Add raw data"`
 
 # Storing and sharing
@@ -71,24 +71,24 @@ Changes to be committed:
 - Sending the data
   - `dvc push`
   - Now we are able to `dvc pull` (after a `git clone`/`git pull`)
-    - `rm -rf .dvc/cache`
-    - `rm -rf data/iris.csv`
+    - `rm -model .dvc/cache`
+    - `rm -model data/phoneme.csv`
 	- `dvc pull`
 
 # Storing changes
 - Duplicate the data
 - `dvc status`
-- `dvc add data/iris.csv`
-- `git add data/iris.csv.dvc`
+- `dvc add data/phoneme.csv`
+- `git add data/phoneme.csv.dvc`
 - `git commit -m "Dataset update"
 - `git push`
 - `dvc push`
 
 # Switching between versions
-- Hisory of iris placeholder
-  - `git log -p data/iris.csv.dvc`
+- Hisory of phoneme placeholder
+  - `git log -p data/phoneme.csv.dvc`
 - Loading the previous version of the data
-  - `git checkout HEAD~1 data/iris.csv.dvc`
+  - `git checkout HEAD~1 data/phoneme.csv.dvc`
   - `dvc checkout`
 
 ----------
@@ -96,12 +96,12 @@ Changes to be committed:
 # Accessing files
 - `dvc get`
 	- We can download data even outside of a git/dvc directory.
-	- `cd /tmp && dvc get https://github.com/fariasfc/learn-dvc data/iris.csv && wc -l /tmp/iris.csv`
+	- `cd /tmp && dvc get https://github.com/fariasfc/learn-dvc data/phoneme.csv && wc -l /tmp/phoneme.csv`
 	- If some error occurs (404), it is probably the case that the dataset were not `dvc push`ed into the S3 bucket.
 	- If working inside another DVC project, `dvc import` is preferred since it will keep track of versions.
 - `dvc import`
   - Similar to `dvc get` + `dvc add`, but the resulting `.dvc` including metadata to track changes in the source repo. You can use `dvc update` later.
-  - `dvc import https://github.com/fariasfc/learn-dvc data/iris.csv -o data/iris2.csv
+  - `dvc import https://github.com/fariasfc/learn-dvc data/phoneme.csv -o data/phoneme2.csv
 - Python API
 ```
 import dvc.api
@@ -112,11 +112,11 @@ with dvc.api.open(
     # fd is a file descriptor which can be processed normally
 ```
 
-Until now, we haven't upoloaded the dataset itself, we need to perform a git push
+Until now, we haven't upoloaded the dataset itself, we need to pemodelorm a git push
 
 
 # Pipelines
-We will create a simple 3 stages pipeline:
+We will create a simple 4 stages pipeline:
 1. split_data: Split the data into train and test sets.
 2. featurize_data: Apply a Standard Scaler
 3. train_model: Create and train model then save it.
@@ -127,9 +127,9 @@ We will create a simple 3 stages pipeline:
 dvc run --name split \
 	--params split.seed,split.test_percentage \
 	--deps src/data/split_data.py \
-	--deps data/iris.csv \
+	--deps data/phoneme.csv \
 	--outs data/splits \
-	python src/data/split_data.py data/iris.csv data/splits
+	python src/data/split_data.py data/phoneme.csv data/splits
 ```
 - It will generate a `dvc.yaml` file to reproduce with a single `dvc repro`.
 - Another file called `dvc.lock` is also generated with the md5 of the dependencies and outputs of the stage.
@@ -137,7 +137,7 @@ dvc run --name split \
 ## Creating the featurize stage
 ```
 dvc run --name featurize \
-	--params featurize.seed \
+	--params featurize.feature_range \
 	--deps src/data/featurize_data.py \
 	--deps data/splits \
 	--outs data/features \
@@ -148,20 +148,31 @@ dvc run --name featurize \
 ## Creating the train_model stage
 ```
 dvc run --name train_model \
-	--params model.seed,model.n_estimators \
+	--params model \
 	--deps src/models/train_model.py \
 	--deps data/features \
-	--outs model/rf.pkl \
+	--outs model/model.pkl \
 	python src/models/train_model.py data/features model
 ```
 
+### Try dvc repro
+- `dvc repro`
+  - Everything is cached
+- Change featurize.feature_range and run `dvc repro` again
+  - Only the featurize stage would run again.
+- Change featurize.feature_range to the old value and `dvc repro` again
+  - It won't run anything, since it cached the repro before.
+
+# Show the dvc dag
+`dvc dag`
 
 ## Creating the evaluate_model stage
 ```
 dvc run --name evaluate_model \
-	--params model.seed,model.n_estimators \
-	--deps src/models/train_model.py \
+	--deps src/models/evaluate_model.py \
 	--deps data/features \
-	--outs model/rf.pkl \
-	python src/models/train_model.py data/features model
+	--deps model/model.pkl \
+	--metrics-no-cache scores.json \
+	--plots-no-cache roc.json \
+	python src/models/evaluate_model.py data/features model/model.pkl scores.json roc.json
 ```
