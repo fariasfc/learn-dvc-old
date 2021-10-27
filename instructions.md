@@ -2,6 +2,7 @@
 `conda install dvc`
 `conda install -c conda-forge dvc-s3`
 
+# Copy S3 credentials
 # Create a repo and clone it!
 `cd` into the cloned folder
 
@@ -212,3 +213,6 @@ We can also run experiments in batches using queues
 - `dvc exp run --queue --set-param model.hidden_layer_sizes="(3,4)"`
 - `dvc exp run --run-all --jobs 2`
 - `dvc exp show`
+
+## Creating a branch from a specific experiment
+- `dvc exp branch exp-41691 "(40,10)"`
