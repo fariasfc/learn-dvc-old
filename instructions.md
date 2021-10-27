@@ -184,6 +184,10 @@ Now we need to commit both `roc.json` and `scores.json` so we can compare betwee
 - `dvc plots show`
 	- Open file in browser
 - `dvc plots modify roc.json -x fpr -y tpr`
+- `git add scores.json roc.json`
+- `git commit -m "first experiment"`
+- Changes hidden_layer_sizes to (100, 50)
+- `dvc`repro`
 - `dvc plots show`
 	- Open file in browser
 - `dvc metrics show --all-commits`
