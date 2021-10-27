@@ -180,3 +180,10 @@ dvc run --name evaluate_model \
 ## Running dvc repro again
 
 Now we need to commit both `roc.json` and `scores.json` so we can compare between commits.
+- `dvc repro`
+- `dvc plots show`
+	- Open file in browser
+- `dvc plots modify roc.json -x fpr -y tpr`
+- `dvc plots show`
+	- Open file in browser
+- `dvc metrics show --all-commits`

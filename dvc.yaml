@@ -40,3 +40,5 @@ stages:
     plots:
     - roc.json:
         cache: false
+        x: fpr
+        y: tpr
