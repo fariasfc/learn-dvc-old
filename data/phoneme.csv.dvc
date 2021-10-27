@@ -1,0 +1,4 @@
+outs:
+- md5: 8cadda9c3c54ebf6a7346f7183be9e06
+  size: 267336
+  path: phoneme.csv
