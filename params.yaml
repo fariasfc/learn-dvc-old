@@ -1,0 +1,10 @@
+split:
+  seed: 42
+  test_percentage: 0.25
+
+featurize:
+  seed: 42
+
+model:
+  seed: 42
+  n_estimators: 100
