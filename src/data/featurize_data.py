@@ -3,8 +3,7 @@ import random
 from pathlib import Path
 import typer
 import pandas as pd
-from sklearn.preprocessing import LabelEncoder
-from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import MinMaxScaler
 from sklearn.model_selection import train_test_split
 import yaml
 
@@ -25,7 +24,7 @@ def featurize_data(splits_dir: Path, output_dir: Path) -> None:
     test_y = df_test["Class"].values
 
     # Scaling features
-    scaler = StandardScaler()
+    scaler = MinMaxScaler(feature_range=eval(params["feature_range"]))
     train_x = scaler.fit_transform(train_x)
     test_x = scaler.transform(test_x)
 
