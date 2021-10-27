@@ -3,7 +3,8 @@ split:
   test_percentage: 0.25
 
 featurize:
-  seed: 42
+  seed: 4
+  feature_range: (-1,1)
 
 model:
   seed: 42
