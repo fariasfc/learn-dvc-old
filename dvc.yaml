@@ -1,0 +1,42 @@
+stages:
+  split:
+    cmd: python src/data/split_data.py data/phoneme.csv data/splits
+    deps:
+    - data/phoneme.csv
+    - src/data/split_data.py
+    params:
+    - split.seed
+    - split.test_percentage
+    outs:
+    - data/splits
+  featurize:
+    cmd: python src/data/featurize_data.py data/splits data/features
+    deps:
+    - data/splits
+    - src/data/featurize_data.py
+    params:
+    - featurize.feature_range
+    outs:
+    - data/features
+  train_model:
+    cmd: python src/models/train_model.py data/features model
+    deps:
+    - data/features
+    - src/models/train_model.py
+    params:
+    - model
+    outs:
+    - model/model.pkl
+  evaluate_model:
+    cmd: python src/models/evaluate_model.py data/features model/model.pkl scores.json
+      roc.json
+    deps:
+    - data/features
+    - model/model.pkl
+    - src/models/evaluate_model.py
+    metrics:
+    - scores.json:
+        cache: false
+    plots:
+    - roc.json:
+        cache: false
