@@ -176,3 +176,7 @@ dvc run --name evaluate_model \
 	--plots-no-cache roc.json \
 	python src/models/evaluate_model.py data/features model/model.pkl scores.json roc.json
 ```
+
+## Running dvc repro again
+
+Now we need to commit both `roc.json` and `scores.json` so we can compare between commits.
